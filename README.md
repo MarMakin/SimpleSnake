@@ -1,2 +1,2 @@
 # SimpleSnake
-Simple mobile game (LibGDX)
+Simple game (LibGDX)
