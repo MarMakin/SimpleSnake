@@ -1,0 +1,2 @@
+# SimpleSnake
+Simple game (LibGDX)
