@@ -26,6 +26,7 @@ public class GameScreen extends ScreenAdapter {
 
     private static final float MOVE_TIME = 0.2F;
     private float timer = MOVE_TIME;
+    private boolean directionSet = false;
 
     private static final int SNAKE_MOVEMENT = 32;
     private int snakeX = 0, snakeY = 0;
@@ -55,6 +56,7 @@ public class GameScreen extends ScreenAdapter {
         if(timer <= 0){
             timer = MOVE_TIME;
             moveSnake();
+            directionSet = false;
             checkForOutOfBounds();
             updateBodyPartsPosition();
             checkAppleCollision();
@@ -106,6 +108,34 @@ public class GameScreen extends ScreenAdapter {
 
     }
 
+    private void updateIfNotOppositeDirection(int newSnakeDirection, int oppositeDirection){
+        if(snakeDirection != oppositeDirection || bodyParts.size == 0) snakeDirection = newSnakeDirection;
+    }
+
+    private void updateDirection(int newSnakeDirection){
+        if (!directionSet && snakeDirection != newSnakeDirection) {
+            directionSet = true;
+            switch (newSnakeDirection) {
+                case LEFT: {
+                    updateIfNotOppositeDirection(newSnakeDirection, RIGHT);
+                }
+                break;
+                case RIGHT: {
+                    updateIfNotOppositeDirection(newSnakeDirection, LEFT);
+                }
+                break;
+                case UP: {
+                    updateIfNotOppositeDirection(newSnakeDirection, DOWN);
+                }
+                break;
+                case DOWN: {
+                    updateIfNotOppositeDirection(newSnakeDirection, UP);
+                }
+                break;
+            }
+        }
+    }
+
     private void moveSnake(){
         snakeXBeforeUpdate = snakeX;
         snakeYBeforeUpdate = snakeY;
@@ -142,10 +172,10 @@ public class GameScreen extends ScreenAdapter {
         boolean rPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
         boolean uPressed = Gdx.input.isKeyPressed(Input.Keys.UP);
         boolean dPressed = Gdx.input.isKeyPressed(Input.Keys.DOWN);
-        if (lPressed) snakeDirection = LEFT;
-        if (rPressed) snakeDirection = RIGHT;
-        if (uPressed) snakeDirection = UP;
-        if (dPressed) snakeDirection = DOWN;
+        if (lPressed) updateDirection(LEFT);
+        if (rPressed) updateDirection(RIGHT);
+        if (uPressed) updateDirection(UP);
+        if (dPressed) updateDirection(DOWN);
     }
 
     private void checkAndPlaceApple(){
