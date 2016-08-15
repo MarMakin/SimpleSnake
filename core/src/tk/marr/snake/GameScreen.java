@@ -40,6 +40,8 @@ public class GameScreen extends ScreenAdapter {
 
     private Array<BodyPart> bodyParts = new Array<BodyPart>();
 
+    private boolean hasHit = false;
+
     @Override
     public void show() {
         batch = new SpriteBatch();
@@ -52,19 +54,26 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void render(float delta) {
         queryInput();
-        timer -= delta;
-        if(timer <= 0){
-            timer = MOVE_TIME;
-            moveSnake();
-            directionSet = false;
-            checkForOutOfBounds();
-            updateBodyPartsPosition();
-            checkAppleCollision();
-        }
+        updateSnake(delta);
+        checkAppleCollision();
         checkAndPlaceApple();
         clearScreen();
         drawGrid();
         draw();
+    }
+
+    private void updateSnake(float delta){
+        if(!hasHit) {
+            timer -= delta;
+            if (timer <= 0) {
+                timer = MOVE_TIME;
+                moveSnake();
+                checkForOutOfBounds();
+                updateBodyPartsPosition();
+                checkSnakeBodyCollision();
+                directionSet = false;
+            }
+        }
     }
 
     private void checkAppleCollision() {
@@ -73,6 +82,12 @@ public class GameScreen extends ScreenAdapter {
             bodyPart.updateBodyPosition(snakeX, snakeY);
             bodyParts.insert(0, bodyPart);
             appleAvailable = false;
+        }
+    }
+
+    private void checkSnakeBodyCollision(){
+        for(BodyPart bodyPart : bodyParts){
+            if(bodyPart.x == snakeX && bodyPart.y == snakeY) hasHit = true;
         }
     }
 
