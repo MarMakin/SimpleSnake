@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 
@@ -14,6 +15,9 @@ import com.badlogic.gdx.utils.Array;
  * Created by Marcin on 2016-08-14.
  */
 public class GameScreen extends ScreenAdapter {
+
+    private ShapeRenderer shapeRenderer;
+    private static final int GRID_CELL = 32;
 
     private Texture snakeHead;
     private Texture apple;
@@ -41,6 +45,7 @@ public class GameScreen extends ScreenAdapter {
         snakeHead = new Texture(Gdx.files.internal("snakehead.png"));
         apple = new Texture(Gdx.files.internal("apple.png"));
         snakeBody = new Texture(Gdx.files.internal("snakebody.png"));
+        shapeRenderer = new ShapeRenderer();
     }
 
     @Override
@@ -56,6 +61,7 @@ public class GameScreen extends ScreenAdapter {
         }
         checkAndPlaceApple();
         clearScreen();
+        drawGrid();
         draw();
     }
 
@@ -150,6 +156,16 @@ public class GameScreen extends ScreenAdapter {
                 appleAvailable = true;
             } while(appleX == snakeX && appleY == snakeY);
         }
+    }
+
+    private void drawGrid(){
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        for(int x = 0; x < Gdx.graphics.getWidth(); x += GRID_CELL){
+            for(int y = 0; y < Gdx.graphics.getHeight(); y += GRID_CELL){
+                shapeRenderer.rect(x, y, GRID_CELL, GRID_CELL);
+            }
+        }
+        shapeRenderer.end();
     }
 
     private class BodyPart {
